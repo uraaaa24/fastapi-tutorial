@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Path, Query
 from pydantic import BaseModel
 
 
@@ -36,11 +36,16 @@ async def read_items(
 
 
 @app.get("/items/{item_id}")
-async def read_user_item(
-    item_id: str, needy: str, skip: int = 0, limit: Union[int, None] = None
+async def read_items_by_id(
+    *,
+    item_id: int = Path(title="The ID of the item to get", gt=0, le=1000),
+    q: str,
+    size: float = Query(gt=0, lt=10.5),
 ):
-    item = {"item_id": item_id, "needy": needy, "skip": skip, "limit": limit}
-    return item
+    results = {"item_id": item_id}
+    if q:
+        results.update({"q": q})
+    return results
 
 
 @app.post("/items/")
