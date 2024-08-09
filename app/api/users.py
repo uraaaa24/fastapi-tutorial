@@ -1,11 +1,11 @@
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import APIRouter
 
-app = FastAPI()
+router = APIRouter()
 
 
-@app.get("/users/{usesr_id}/items/{item_id}")
+@router.get("/users/{usesr_id}/items/{item_id}")
 async def read_user_item(
     user_id: int, item_id: str, q: Union[str, None] = None, short: bool = False
 ):

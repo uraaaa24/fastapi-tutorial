@@ -1,6 +1,6 @@
 from typing import Union
 
-from fastapi import Body, FastAPI, Path, Query
+from fastapi import APIRouter, Body, FastAPI, Path, Query
 from pydantic import BaseModel
 
 
@@ -16,15 +16,15 @@ class User(BaseModel):
     full_name: Union[str, None] = None
 
 
-app = FastAPI()
+router = APIRouter()
 
 fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
 
 
-@app.get("/items/")
+@router.get("/items/")
 async def read_items(
     q: Union[str, None] = Query(
-        default=None,
+        ...,
         alias="item-query",
         title="Query string",
         description="Query string for the items to search in the database that have a good match",
@@ -40,12 +40,12 @@ async def read_items(
     return results
 
 
-@app.get("/items/{item_id}")
+@router.get("/items/{item_id}")
 async def read_items_by_id(
     *,
-    item_id: int = Path(title="The ID of the item to get", gt=0, le=1000),
+    item_id: int = Path(..., title="The ID of the item to get", gt=0, le=1000),
     q: str,
-    size: float = Query(gt=0, lt=10.5),
+    size: float = Query(default=None, gt=0, lt=10.5),
 ):
     results = {"item_id": item_id}
     if q:
@@ -53,7 +53,7 @@ async def read_items_by_id(
     return results
 
 
-@app.post("/items/")
+@router.post("/items/")
 async def create_item(item: Item):
     item_dict = item.dict()
 
@@ -64,10 +64,10 @@ async def create_item(item: Item):
     return item_dict
 
 
-@app.put("/items/{item_id}")
+@router.put("/items/{item_id}")
 async def update_item(
     item_id: int,
-    item: Item = Body(embed=True),
+    item: Item = Body(..., embed=True),
 ):
     results = {"item_id": item_id, "item": item}
     return results

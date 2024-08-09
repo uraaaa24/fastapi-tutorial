@@ -1,8 +1,6 @@
 from enum import Enum
 
-from fastapi import FastAPI
-
-app = FastAPI()
+from fastapi import APIRouter, FastAPI
 
 
 # 機械学習モデルの名前
@@ -12,10 +10,10 @@ class ModelName(str, Enum):
     letnet = "letnet"
 
 
-app = FastAPI()
+router = APIRouter()
 
 
-@app.get("/models/{model_name}")
+@router.get("/models/{model_name}")
 async def get_model(model_name: ModelName):
     if model_name is ModelName.alexnet:
         return {"model_name": model_name, "message": "Deep Learning FTW!"}
