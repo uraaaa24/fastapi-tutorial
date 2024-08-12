@@ -1,24 +1,8 @@
-from typing import Union
+from typing import Dict, List, Union
 
-from fastapi import APIRouter, Body, FastAPI, Path, Query
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Body, Path, Query
 
-
-class Item(BaseModel):
-    name: str
-    description: Union[str, None] = Field(
-        default=None, title="The description of the item", max_length=300
-    )
-    price: float = Field(
-        default=None, title="The price must be greater than zero", gt=0
-    )
-    tax: Union[float, None] = None
-
-
-class User(BaseModel):
-    username: str
-    full_name: Union[str, None] = None
-
+from app.schema.items import Image, Item, Offer
 
 router = APIRouter()
 
@@ -66,6 +50,21 @@ async def create_item(item: Item):
         item_dict.update({"price_with_tax": price_with_tax})
 
     return item_dict
+
+
+@router.post("/offers")
+async def create_offer(offer: Offer):
+    return offer
+
+
+@router.post("/images/multiple/")
+async def create_multiple_images(images: List[Image]):
+    return images
+
+
+@router.post("/index-weights/")
+async def create_index_weights(weights: Dict[int, float]):
+    return weights
 
 
 @router.put("/items/{item_id}")
