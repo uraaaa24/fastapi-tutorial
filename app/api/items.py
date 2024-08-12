@@ -1,8 +1,7 @@
 from typing import Dict, List, Union
 
 from fastapi import APIRouter, Body, Path, Query
-
-from app.schema.items import Image, Item, Offer
+from schema.items import Image, Item, Offer
 
 router = APIRouter()
 
@@ -70,7 +69,20 @@ async def create_index_weights(weights: Dict[int, float]):
 @router.put("/items/{item_id}")
 async def update_item(
     item_id: int,
-    item: Item = Body(..., embed=True),
+    item: Item = Body(
+        ...,
+        example={
+            "name": "Foo",
+            "description": "A very nice Item",
+            "price": 35.4,
+            "tax": 3.2,
+            "tags": ["rock", "metal", "bar"],
+            "image": [
+                {"url": "http://example.com/baz.jpg", "name": "The Foo"},
+                {"url": "http://example.com/bar.jpg", "name": "The Baz"},
+            ],
+        },
+    ),
 ):
     results = {"item_id": item_id, "item": item}
     return results
