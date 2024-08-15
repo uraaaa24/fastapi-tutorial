@@ -1,4 +1,6 @@
+from datetime import datetime, time, timedelta
 from typing import Dict, List, Union
+from uuid import UUID
 
 from fastapi import APIRouter, Body, Path, Query
 from schema.items import Image, Item, Offer
@@ -67,22 +69,44 @@ async def create_index_weights(weights: Dict[int, float]):
 
 
 @router.put("/items/{item_id}")
-async def update_item(
-    item_id: int,
-    item: Item = Body(
-        ...,
-        example={
-            "name": "Foo",
-            "description": "A very nice Item",
-            "price": 35.4,
-            "tax": 3.2,
-            "tags": ["rock", "metal", "bar"],
-            "image": [
-                {"url": "http://example.com/baz.jpg", "name": "The Foo"},
-                {"url": "http://example.com/bar.jpg", "name": "The Baz"},
-            ],
-        },
-    ),
+async def read_items_by_id(
+    item_id: UUID,
+    start_datetime: datetime = Body(...),
+    end_datetime: datetime = Body(...),
+    process_after: timedelta = Body(...),
+    repeat_at: Union[time, None] = Body(default=None),
 ):
-    results = {"item_id": item_id, "item": item}
-    return results
+    start_process = start_datetime + process_after
+    duration = end_datetime - start_process
+
+    return {
+        "item_id": item_id,
+        "start_datetime": start_datetime,
+        "end_datetime": end_datetime,
+        "process_after": process_after,
+        "repeat_at": repeat_at,
+        "start_process": start_process,
+        "duration": duration,
+    }
+
+
+# @router.put("/items/{item_id}")
+# async def update_item(
+#     item_id: int,
+#     item: Item = Body(
+#         ...,
+#         example={
+#             "name": "Foo",
+#             "description": "A very nice Item",
+#             "price": 35.4,
+#             "tax": 3.2,
+#             "tags": ["rock", "metal", "bar"],
+#             "image": [
+#                 {"url": "http://example.com/baz.jpg", "name": "The Foo"},
+#                 {"url": "http://example.com/bar.jpg", "name": "The Baz"},
+#             ],
+#         },
+#     ),
+# ):
+#     results = {"item_id": item_id, "item": item}
+#     return results
