@@ -2,7 +2,7 @@ from datetime import datetime, time, timedelta
 from typing import Dict, List, Union
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Cookie, Path, Query
+from fastapi import APIRouter, Body, Cookie, Header, Path, Query
 from schema.items import Image, Item, Offer
 
 router = APIRouter()
@@ -11,8 +11,15 @@ fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"
 
 
 @router.get("/items/")
-async def read_items(ads_id: Union[str, None] = Cookie(None)):
-    return {"ads_id": ads_id}
+async def read_items(
+    x_token: Union[List[str], None] = Header(default=None),
+):
+    return {"X-Token values": x_token}
+
+
+# @router.get("/items/")
+# async def read_items(ads_id: Union[str, None] = Cookie(default=None)):
+# return {"ads_id": ads_id}
 
 
 @router.get("/items/{item_id}")
