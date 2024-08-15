@@ -26,3 +26,17 @@ class Offer(BaseModel):
 class User(BaseModel):
     username: str
     full_name: Union[str, None] = None
+
+
+class BaseItem(BaseModel):
+    description: str
+    type: str
+
+
+class CarItem(BaseItem):
+    type = "car"
+
+
+class PlaneItem(BaseItem):
+    type = "plane"
+    size: int

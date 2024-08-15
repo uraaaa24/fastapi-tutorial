@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Union
 from uuid import UUID
 
 from fastapi import APIRouter, Body, Cookie, Header, Path, Query
-from schema.items import Image, Item, Offer
+from schema.items import CarItem, Image, Item, Offer, PlaneItem
 
 router = APIRouter()
 
@@ -33,7 +33,7 @@ async def read_items(
 # return {"ads_id": ads_id}
 
 
-@router.get("/items/{item_id}", response_model=Item, response_model_exclude_unset=True)
+@router.get("/items/{item_id}", response_model=Union[PlaneItem, CarItem])
 async def read_items_by_id(item_id: str):
     return dummy_items[item_id]
 
@@ -52,6 +52,14 @@ async def read_item_name(item_id: str):
 )
 async def read_item_public_data(item_id: str):
     return dummy_items[item_id]
+
+
+@router.get("keyword-weight", response_model=Dict[str, float])
+async def read_keyword_weights():
+    return {
+        "foo": 2.3,
+        "bar": 3.4,
+    }
 
 
 @router.post("/items/", response_model=Item)
