@@ -2,7 +2,7 @@ from datetime import datetime, time, timedelta
 from typing import Any, Dict, List, Union
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Cookie, Header, Path, Query
+from fastapi import APIRouter, Body, Header, status
 from schema.items import CarItem, Image, Item, Offer, PlaneItem
 
 router = APIRouter()
@@ -62,9 +62,9 @@ async def read_keyword_weights():
     }
 
 
-@router.post("/items/", response_model=Item)
+@router.post("/items/", response_model=Item, status_code=status.HTTP_201_CREATED)
 async def create_item(item: Item) -> Any:
-    item_dict = item.dict()
+    item_dict = item.model_dump()
 
     if item.tax:
         price_with_tax = item.price + item.tax
